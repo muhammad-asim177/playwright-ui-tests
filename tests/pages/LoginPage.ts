@@ -6,6 +6,7 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
   readonly errorMessage: Locator;
+  readonly forgotPasswordLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class LoginPage {
     this.passwordInput = page.locator('input[name="password"]');
     this.loginButton = page.locator('button[type="submit"]');
     this.errorMessage = page.locator('.oxd-alert-content-text');
+    this.forgotPasswordLink = page.getByRole('link', { name: /Forgot your password\?/i });
   }
 
   async goto() {
@@ -27,5 +29,11 @@ export class LoginPage {
 
   async getErrorMessage() {
     return this.errorMessage.textContent();
+  }
+
+  async navigateToPasswordReset() {
+    await this.forgotPasswordLink.scrollIntoViewIfNeeded();
+    await this.forgotPasswordLink.click();
+    await this.page.waitForURL(/requestPasswordResetCode/);
   }
 }
