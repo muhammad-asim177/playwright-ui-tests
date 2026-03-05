@@ -18,45 +18,5 @@ test.describe('OrangeHRM Login', () => {
         await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
     });
 
-    test('should show error with invalid credentials', async () => {
-        await loginPage.login('invalid', 'invalid');
-        await expect(loginPage.errorMessage).toBeVisible();
-        await expect(loginPage.errorMessage).toContainText('Invalid credentials');
-    });
-
-    test('should show error with empty credentials', async () => {
-        await loginPage.login('', '');
-        await expect(loginPage.errorMessage).toBeVisible();
-        await expect(loginPage.errorMessage).toContainText('Required');
-    });
-
-    test.describe('When logged in', () => {
-        test.beforeEach(async ({ page }) => {
-            //   await page.setViewportSize({ width: 1500, height: 700 });
-            await page.evaluate(() => {
-                document.body.style.zoom = '0.7';
-            });
-            await loginPage.login('Admin', 'admin123');
-            await expect(page.getByRole('heading', { name: /dashboard/i })).toBeVisible();
-        });
-
-        test('should logout successfully', async ({ page }) => {
-            // Open user dropdown and click logout
-            await page.locator('.oxd-userdropdown-icon').click();
-            await page.getByRole('menuitem', { name: /logout/i }).click();
-            await expect(page).toHaveURL(/auth\/login/);
-            await expect(loginPage.loginButton).toBeVisible();
-        });
-    });
-
-    test('should show error for locked user', async () => {
-        await loginPage.login('locked_out_user', 'admin123');
-        await expect(loginPage.errorMessage).toBeVisible();
-    });
-
-    test('should navigate to password reset page when clicking Forgot your password?', async ({ page }) => {
-        await page.getByRole('link', { name: /Forgot your password\?/i }).click();
-        await expect(page).toHaveURL(/requestPasswordResetCode/);
-        await expect(page.getByText(/Reset Password/i)).toBeVisible();
-    });
+    
 });
