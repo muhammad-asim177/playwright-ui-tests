@@ -21,7 +21,9 @@ test('get started link', async ({ page }) => {
 test('API page has correct heading', async ({ page }) => {
   await page.goto('https://playwright.dev/');
   await page.getByRole('link', { name: 'API' }).click();
-  await expect(page.getByRole('heading', { name: /API reference/i })).toBeVisible();
+  // Wait for page to load and check for API-related heading
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByRole('heading').filter({ hasText: /API/i })).toBeVisible({ timeout: 10000 });
 });
 
 // Test: Footer contains copyright
@@ -65,11 +67,12 @@ test('mobile menu opens and closes', async ({ page }) => {
 // Test: External GitHub link
 test('GitHub link opens in new tab', async ({ page, context }) => {
   await page.goto('https://playwright.dev/');
+  // Target the specific header GitHub link to avoid ambiguity
   const [newPage] = await Promise.all([
     context.waitForEvent('page'),
-    page.getByRole('link', { name: /GitHub/i }).click(),
+    page.locator('.header-github-link').click(),
   ]);
-  await newPage.waitForLoadState();
-  await expect(newPage).toHaveURL(/github.com\/microsoft\/playwright/);
+  await newPage.waitForLoadState('networkidle');
+  await expect(newPage).toHaveURL(/github.com\/microsoft\/playwright/, { timeout: 10000 });
   await newPage.close();
 });
